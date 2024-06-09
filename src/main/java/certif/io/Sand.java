@@ -1,11 +1,10 @@
 package certif.io;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Scanner;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Sand {
     public static void main(String[] args) {
@@ -19,6 +18,8 @@ public class Sand {
         cc();
 
         ser();
+
+        marche();
     }
 
     private static void ser() {
@@ -84,5 +85,67 @@ public class Sand {
 
         System.out.println(p1_rel_p2); // ../sis
         System.out.println(p2_rel_p1); // ../bro
+    }
+
+    public static void marche() {
+        List<Path> result = new ArrayList<>();
+        List<Path> result2 = new ArrayList<>();
+        try (Stream<Path> walk = Files.walk(Paths.get("/home"), 3, FileVisitOption.FOLLOW_LINKS);
+             Stream<Path> list = Files.list(Paths.get("/home"))) {
+            result = walk.filter(Files::isRegularFile).toList();
+            result2 = list.filter(Files::isRegularFile).toList();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+        System.out.println(result);
+        System.out.println(result2);
+
+        try {
+            Path startingFile = Files.walkFileTree(Paths.get("/home"), Collections.emptySet(), 3, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path file, BasicFileAttributes attrs) {
+                    System.out.println("preVisitDirectory");
+                    System.out.println(file);
+                    System.out.println(attrs.size());
+                    System.out.println("CONTINUE");
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                    System.out.println("visitFile");
+                    System.out.println(file);
+                    System.out.println(attrs.creationTime());
+                    System.out.println("SKIP_SIBLINGS");
+                    return FileVisitResult.SKIP_SIBLINGS;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
+                    System.out.println("visitFileFailed");
+                    System.out.println(file);
+                    System.out.println(exc);
+                    System.out.println("SKIP_SUBTREE");
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path file, IOException exc) {
+                    System.out.println("postVisitDirectory");
+                    System.out.println(file);
+                    System.out.println(exc);
+                    System.out.println("TERMINATE");
+                    return FileVisitResult.TERMINATE;
+                }
+            });
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+
+        try {
+            Files.list(Paths.get("/home"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
