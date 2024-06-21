@@ -13,6 +13,14 @@ public class Sand {
         System.out.println(expressionSwitchLabel(day));
         System.out.println(expressionSwitchStatement(day));
         statementSwitchNonExhaustive(day);
+
+        Mere m = new PetiteFille();
+        if (m instanceof PetiteFille pf) {
+            System.out.println(pf);
+            if (m instanceof Fille f) { // f instanceof Fille pf not allowed
+                System.out.println(f);
+            }
+        }
     }
 
     public static int expressionSwitchLabel(Day day) {
@@ -64,4 +72,15 @@ public class Sand {
             }
         }
     }
+}
+
+class Mere {
+}
+
+class Fille extends Mere {
+
+}
+
+class PetiteFille extends Fille {
+
 }

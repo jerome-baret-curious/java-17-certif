@@ -25,11 +25,11 @@ public class Sand {
     private static void ser() {
         OneClass obj = new OneClass("yy");
         byte[] ba = null;
-        ByteArrayOutputStream boas = new ByteArrayOutputStream();
-        try (ObjectOutputStream ois = new ObjectOutputStream(boas)) {
-            ois.writeObject(obj);
-            ois.writeObject(obj);
-            ba = boas.toByteArray();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(obj);
+            oos.writeObject(obj);
+            ba = baos.toByteArray();
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
@@ -49,10 +49,24 @@ public class Sand {
         System.out.println(oc1.getName());
         System.out.println(oc1);
         System.out.println(oc2);//same as oc1
+
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        try (ObjectOutputStream oos = new ObjectOutputStream(baos2)) {
+            oos.writeObject(new Oui());
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos2.toByteArray());
+        try (ObjectInputStream ois = new ObjectInputStream(bais)) {
+            Oui oui = (Oui)ois.readObject();
+            System.out.println(oui); // Oui{j=10.0, i=5}
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     private static void cc() {
-        Console c = System.console();
+        Console c = System.console(); // KNOW IT!
         if (c == null) {
             System.err.println("No console.");
             return;
@@ -143,9 +157,44 @@ public class Sand {
         }
 
         try {
-            Files.list(Paths.get("/home"));
+            Files.list(Paths.get("/home")).forEach(System.out::println);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        try {
+            Files.lines(Paths.get("src/main/resources/rb/MyInt.properties")).forEach(System.out::println);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            List<String> strings = Files.readAllLines(Paths.get("src/main/resources/rb/MyInt.properties"));
+            System.out.println(strings);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+class Reponse {
+    int i;
+    Reponse() {
+        i = 5;
+    }
+}
+class Oui extends Reponse implements Serializable {
+    double j;
+    Oui() {
+        j = 10.0;
+        i = 88;
+    }
+
+    @Override
+    public String toString() {
+        return "Oui{" +
+                "j=" + j +
+                ", i=" + i +
+                '}';
     }
 }

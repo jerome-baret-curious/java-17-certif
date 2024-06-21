@@ -19,11 +19,37 @@ public class Sand {
 
             sand.insert(connection);
             sand.statement(connection, true);
+
+            sand.call(connection);
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println(e.getSQLState());
             System.err.println(e.getErrorCode());
         }
+    }
+
+    private void call(Connection connection) throws SQLException {
+        CallableStatement callableStatement = connection.prepareCall("{call updateThing(?, ?)}");
+
+        callableStatement.setString(1, "theFirst");
+        callableStatement.setInt(2, 987);
+        callableStatement.executeUpdate();
+
+        callableStatement = connection.prepareCall("{call calculateIt(?)}");
+
+        callableStatement.setDouble(1, 45.0);
+        callableStatement.registerOutParameter(1, Types.DOUBLE);
+
+        ResultSet result = callableStatement.executeQuery();
+        //while(result.next()) {  }
+
+        Double out = callableStatement.getDouble(1);
+
+        callableStatement = connection.prepareCall("{? = call hmm(?)}");
+        callableStatement.registerOutParameter(1, Types.VARCHAR);
+        callableStatement.setInt(2, 58);
+        boolean isResultSet = callableStatement.execute();
+        String hmmResult = callableStatement.getString(1);
     }
 
     private void insert(Connection connection) throws SQLException {

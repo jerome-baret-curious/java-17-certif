@@ -52,14 +52,20 @@ public class Sand {
         // value-based: final class, final fields, equals() may be ==, ...
         List<String> modifiableList = new ArrayList<>();
         modifiableList.add("gf");
+        modifiableList.add("hy");
         System.out.println(modifiableList);
         ListIterator<String> stringListIterator = modifiableList.listIterator();
         //stringListIterator.remove();//IllegalStateException (call next() or previous() before)
 
         int i = Collections.binarySearch(unmodifiableList, "g", Comparator.nullsLast(Comparator.naturalOrder()));
-        System.out.println("index of g " + i); // -1
+        System.out.println("index of g " + i); // -1 (always < 0 if not found but possible too if collection not ordered!)
         i = Collections.binarySearch(unmodifiableList, "kk", Comparator.nullsLast(Comparator.naturalOrder()));
         System.out.println("index of kk " + i); // 1
+
+        Collections.sort(modifiableList);
+        System.out.println(modifiableList); // [gf, hy]
+        Collections.reverse(modifiableList);
+        System.out.println(modifiableList); // [hy, gf]
 
         return unmodifiableList;
     }

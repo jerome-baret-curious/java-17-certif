@@ -16,3 +16,6 @@
 ```
 L'accès réflexif d'un module normal (non open) est possible sur le contenu `public` et `protected` des packages exportés.
 Et sur tout le contenu des packages ouverts.
+
+Noms des modules : identifiants Java séparés par des .  
+Modules automatiques : byte-buddy-0.0.1.jar devient byte.buddy (avec version 0.0.1), mais `byte` est réservé donc `FindException`

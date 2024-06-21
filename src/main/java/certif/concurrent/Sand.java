@@ -2,10 +2,13 @@ package certif.concurrent;
 
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 public class Sand {
     public static void main(String[] args) {
+        locks();
         ExecutorService executor = Executors.newFixedThreadPool(3);
         ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
         Runnable runnableTask = () -> {
@@ -84,6 +87,27 @@ public class Sand {
             throw new RuntimeException(e);
         }
         forkJoin.shutdown();
+    }
+
+    static void locks() {
+        Lock lock = new ReentrantLock();
+        System.out.println("locking...");
+        lock.lock();// wait to acquire a lock
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        lock.unlock();
+        System.out.println("unlocked");
+
+        if (lock.tryLock()) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {} finally {
+                lock.unlock();
+            }
+        }
     }
 
     static class ParamTask implements Callable<String> {

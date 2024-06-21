@@ -11,6 +11,8 @@ public class Sand {
         } catch (Exception e) {
             System.out.println("fir exp : " + e.getClass()); // MyFirstException
             System.out.println("suppr : " + Arrays.toString(e.getSuppressed()));//exception from close is suppressed
+        } finally {
+            System.out.println("catch or finally is required for 'normal' try");
         }
 
         try {
